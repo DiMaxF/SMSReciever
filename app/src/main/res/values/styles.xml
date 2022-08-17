@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="colorPrimary">#528ef7</item>
+        <item name="colorPrimaryDark">#528ef7</item>
+        <item name="colorAccent">#528ef7</item>
+    </style>
+
+    <style name="BlueButton" parent="@style/Widget.AppCompat.Button.Colored">
+        <item name="colorButtonNormal">#528ef7</item>
+        <item name="colorControlHighlight">#528ef7</item>
+    </style>
+</resources>

@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">SMSReciever</string>
+    <string name="default_url">https://google.com</string>
+</resources>
