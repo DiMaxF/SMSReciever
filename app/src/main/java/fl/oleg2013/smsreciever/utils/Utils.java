@@ -1,6 +1,8 @@
 package fl.oleg2013.smsreciever.utils;
 
 import android.content.Context;
+import android.content.Intent;
+import android.os.AsyncTask;
 import android.util.Log;
 
 import org.json.JSONObject;
@@ -45,7 +47,6 @@ public class Utils {
             }
         }
 
-
         public static JSONObject GetJson(Context context) {
             try{
                 File file = new File(context.getFilesDir(), dataFileName);
@@ -69,55 +70,27 @@ public class Utils {
         public static boolean DataExist(Context context){
             return new File(context.getFilesDir(), dataFileName).exists();
         }
+
     }
 
     public static class Server{
 
-        public static void PostRequest(String content, Context context){
-            try{
-                URL url = new URL (Utils.Data.GetJson(context).getString("link"));
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setRequestMethod("POST");
-                conn.setRequestProperty("Content-Type", "application/json;charset=UTF-8");
-                conn.setRequestProperty("Accept","application/json");
-                conn.setDoOutput(true);
-                conn.setDoInput(true);
-
-                JSONObject jsonParam = new JSONObject(content);
-                try(OutputStream os = conn.getOutputStream()) {
-                    byte[] input = jsonParam.toString().getBytes("utf-8");
-                    os.write(input, 0, input.length);
+        public static Runnable GetRequest(String params, Context context){
+            return () -> {
+                try{
+                    String url = Data.GetJson(context).getString("link") + params;
+                    URL link = new URL(url);
+                    HttpURLConnection urlConnection = (HttpURLConnection) link.openConnection();
+                    InputStream in = new BufferedInputStream(urlConnection.getInputStream());
+                    urlConnection.disconnect();
                 }
-                try(BufferedReader br = new BufferedReader(
-                        new InputStreamReader(conn.getInputStream(), "utf-8"))) {
-                    StringBuilder response = new StringBuilder();
-                    String responseLine = null;
-                    while ((responseLine = br.readLine()) != null) {
-                        response.append(responseLine.trim());
-                    }
-                    System.out.println(response.toString());
+                catch (Exception e){
+                    e.printStackTrace();
                 }
-
-                Log.i("STATUS", String.valueOf(conn.getResponseCode()));
-                Log.i("MSG" , conn.getResponseMessage());
-            }
-            catch(Exception e){
-                e.printStackTrace();
-            }
-        }
-
-        public static void GetRequest(String params, Context context){
-            try{
-                String url = Utils.Data.GetJson(context).getString("link") + params;
-                URL link = new URL(url);
-                HttpURLConnection urlConnection = (HttpURLConnection) link.openConnection();
-                InputStream in = new BufferedInputStream(urlConnection.getInputStream());
-                urlConnection.disconnect();
-                Log.d("CODE" , String.valueOf(urlConnection.getResponseCode()));
-            }
-            catch (Exception e){
-                e.printStackTrace();
-            }
+            };
         }
     }
+
 }
+
+
