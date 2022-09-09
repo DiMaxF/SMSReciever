@@ -2,6 +2,8 @@ package fl.oleg2013.smsreciever.utils;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -21,19 +23,17 @@ import java.net.URL;
 
 public class Utils {
 
-    public static class Data{
+    public static class FileManager{
 
-        private static final String dataFileName = "data.json";
-
-        public static void SaveJson(String json, Context context) {
+        public static void SaveJson(String json, String fileName,Context context) {
             try{
                 File dir = new File(String.valueOf(context.getFilesDir()));
                 dir.mkdirs();
-                File file = new File(context.getFilesDir(), dataFileName);
+                File file = new File(context.getFilesDir(), fileName);
 
                 if (file.exists()) {
                     file.delete();
-                    SaveJson(json, context);
+                    SaveJson(json, fileName, context);
                     return;
                 }
 
@@ -47,9 +47,9 @@ public class Utils {
             }
         }
 
-        public static JSONObject GetJson(Context context) {
+        public static JSONObject GetJson(String fileName, Context context) {
             try{
-                File file = new File(context.getFilesDir(), dataFileName);
+                File file = new File(context.getFilesDir(), fileName);
                 FileReader fileReader = new FileReader(file);
                 BufferedReader bufferedReader = new BufferedReader(fileReader);
                 StringBuilder stringBuilder = new StringBuilder();
@@ -67,18 +67,22 @@ public class Utils {
             return null;
         }
 
-        public static boolean DataExist(Context context){
-            return new File(context.getFilesDir(), dataFileName).exists();
+        public static boolean FileExist(String fileName, Context context){
+            return new File(context.getFilesDir(), fileName).exists();
+        }
+
+        public static void DeleteFile(String fileName, Context context){
+            new File(context.getFilesDir(), fileName).delete();
         }
 
     }
 
     public static class Server{
 
-        public static Runnable GetRequest(String params, Context context){
+        public static Runnable GetRequest(String url){
+            Log.e("SMSM", url);
             return () -> {
                 try{
-                    String url = Data.GetJson(context).getString("link") + params;
                     URL link = new URL(url);
                     HttpURLConnection urlConnection = (HttpURLConnection) link.openConnection();
                     InputStream in = new BufferedInputStream(urlConnection.getInputStream());
@@ -88,6 +92,17 @@ public class Utils {
                     e.printStackTrace();
                 }
             };
+        }
+
+        public static boolean isOnline(Context context) {
+            try {
+                ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+                NetworkInfo netInfo = cm.getActiveNetworkInfo();
+                return (netInfo != null && netInfo.isConnected());
+            } catch (NullPointerException e) {
+                e.printStackTrace();
+                return false;
+            }
         }
     }
 

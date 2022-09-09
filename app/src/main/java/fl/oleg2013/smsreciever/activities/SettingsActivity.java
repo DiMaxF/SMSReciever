@@ -64,12 +64,13 @@ public class SettingsActivity extends AppCompatActivity {
         }
         current_url = url_text.getText().toString();
         String json = "{\"link\":\"" + current_url + "\"}";
-        Utils.Data.SaveJson(json, getApplicationContext());
+        Utils.FileManager.SaveJson(json, getString(R.string.settingsFileName), getApplicationContext());
         Toast.makeText(SettingsActivity.this, "Новые данные сохранены :)", Toast.LENGTH_SHORT).show();
     }
 
     private void checkData() {
-        if (Utils.Data.DataExist(getApplicationContext())) {
+        if (Utils.FileManager.FileExist(
+                this.getString(R.string.settingsFileName), getApplicationContext())) {
             setTextView();
             return;
         }
@@ -79,7 +80,8 @@ public class SettingsActivity extends AppCompatActivity {
 
     private void setTextView() {
         try{
-            JSONObject json = Utils.Data.GetJson(getApplicationContext());
+            JSONObject json = Utils.FileManager.GetJson(
+                    this.getString(R.string.settingsFileName), getApplicationContext());
             url_text.setText(json.getString("link"));
         }
         catch (Exception e){

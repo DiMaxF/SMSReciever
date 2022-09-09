@@ -1,4 +1,6 @@
 <resources>
     <string name="app_name">SMSReciever</string>
     <string name="default_url">https://google.com</string>
+    <string name="settingsFileName">data.json</string>
+    <string name="unpostedSmsFileName">unposted.json</string>
 </resources>
